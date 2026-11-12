@@ -28,30 +28,26 @@ Why this design: it uses the Netlify Forms setup the site already has, so leads 
 - **Disclosure** under the button explains the follow-up emails and the unsubscribe link, and says the information is never sold or shared.
 - **Spam:** honeypot field plus Netlify's spam filter (the function only fires on verified submissions).
 
-## Flodesk setup (Kari, about 20 minutes)
+## Flodesk setup (Kari, about 15 minutes, no extra cost)
 
-1. **Segments.** Create these in Audience → Segments. Reuse an existing segment if one already matches; don't make duplicates.
+`FLODESK_API_KEY` is already stored in Netlify. Nothing else goes into Netlify; the function finds segments by name.
 
-   | Key in `FLODESK_SEGMENTS` | Segment name | Purpose |
-   |---|---|---|
-   | `guide:ahwatukee` | Links · Ahwatukee Guide | Triggers Workflow A |
-   | `guide:next-chapter` | Links · Next Chapter Guide | Triggers Workflow B |
-   | `edit` | **Your existing Monthly Edit list segment** | Monthly newsletter, opt-in only |
-   | `journey:local` | Journey · Living Locally | Branching |
-   | `journey:relocating` | Journey · Relocating | Branching |
-   | `journey:downsizing` | Journey · Downsizing / Selling | Branching |
-   | `journey:buying` | Journey · Exploring / Buying | Branching |
+1. **Create these segments** in Flodesk (Audience → Segments). Spell them as shown; capitalization and punctuation don't matter.
 
-2. **Custom fields.** Add these in Audience → Custom fields, as text fields: `links_guide`, `links_journey`, `links_timeline`, `links_phone`, `links_source`, `links_campaign`. They show which guide and which post or DM produced each lead.
-3. **API key.** Create one in Flodesk → Integrations → API keys.
-4. **Netlify environment variables.** Add these in Site settings → Environment variables (never put them in the code):
-   - `FLODESK_API_KEY` = the key
-   - `FLODESK_SEGMENTS` = for example `{"guide:ahwatukee":"<id>","guide:next-chapter":"<id>","edit":"<id>","journey:local":"<id>","journey:relocating":"<id>","journey:downsizing":"<id>","journey:buying":"<id>"}`
-5. **Workflows.** Build them from `EMAILS.md`. Leave each one **paused** until you've reviewed it.
-6. **Test with your own address first:**
+   | Segment name | Purpose |
+   |---|---|
+   | `Links - Ahwatukee Guide` | Triggers Workflow A |
+   | `Links - Next Chapter Guide` | Triggers Workflow B |
+   | `Links - Monthly Edit` | Opt-ins from /links. Add this segment as a recipient of your monthly Edit send next to your existing list; Flodesk de-duplicates across segments |
+   | `Journey - Living Locally` · `Journey - Relocating` · `Journey - Downsizing` · `Journey - Buying` | Branching inside workflows |
+
+2. **Optional custom fields** (Audience → Custom fields, as text): `links_guide`, `links_journey`, `links_timeline`, `links_phone`, `links_source`, `links_campaign`. If you skip them, signups still sync; the function retries without them.
+3. **Workflows.** Build them from `EMAILS.md`. Leave each one **paused** until you've reviewed it.
+4. **Test on the preview with your own address:**
    - Submit once with "Relocating" chosen and once with "Downsizing".
-   - Confirm in Netlify (Functions log) and in Flodesk that the subscriber shows the right segments.
-   - Then unsubscribe that address and submit again. The function should log `not modified`.
+   - Check the Netlify function log for `links-guide: flodesk upsert status=200` and any `segments not found` line.
+   - Confirm the segments in Flodesk.
+   - Then unsubscribe that address and submit again. The log should say `not modified`.
 
 ### Built-in safeguards in the function
 - **No duplicates:** Flodesk creates or updates by email.
@@ -59,10 +55,11 @@ Why this design: it uses the Netlify Forms setup the site already has, so leads 
 - **Monthly Edit only with consent:** the Edit segment is added only when the person chose the Edit or ticked its checkbox.
 - **Privacy:** logs contain no names, emails, or phone numbers.
 - **Inert until configured:** with no API key, it does nothing.
-- ⚠️ **Verify before enabling:** the Flodesk endpoint shapes (`GET /v1/subscribers/{email}` and `POST /v1/subscribers` with `segment_ids` and `custom_fields`) are written from Flodesk's public v1 API. Confirm them against Flodesk's current API docs during step 6. The logic itself is unit-tested against a mocked API (7/7 pass).
+- **Doesn't break on errors:** if a custom field is rejected, the function retries without it. Network failures are logged and never block the visitor; the submission always stays in Netlify Forms.
+- ⚠️ **Verify on the preview:** the Flodesk request format (`GET /v1/subscribers/{email}`, `GET /v1/segments`, `POST /v1/subscribers` with `segment_ids`) is written from Flodesk's public v1 API and hasn't been tested against your live account. Step 4 confirms it. The logic is unit-tested against a mocked API (10/10 pass).
 
 ### No-code alternative
-If you'd rather not use the function, skip steps 3–4. Each week, export "links-guide" submissions from Netlify Forms as a CSV, then import them into Flodesk with the matching segment. Following your Master Database rule, import only people who gave email permission.
+If you'd rather not use the function, ignore it. Each week, export "links-guide" submissions from Netlify Forms as a CSV, then import them into Flodesk with the matching segment. Following your Master Database rule, import only people who gave email permission.
 
 ## ManyChat keywords (ready to paste; needs your ManyChat login)
 

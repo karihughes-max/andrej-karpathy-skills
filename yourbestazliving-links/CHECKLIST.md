@@ -30,7 +30,7 @@
 - [x] Drafts of every journey email (`EMAILS.md`) and ManyChat replies (`LEAD-CAPTURE.md`).
 - [x] Tested in Chromium:
   - 18 browser checks on iPhone 13 and desktop, all passing
-  - 7 unit tests on the Flodesk function, all passing
+  - 10 unit tests on the Flodesk function, all passing
   - mobile, desktop, and before/after previews in `previews/`
 
 ## ⛔ Blocked: needs Kari's access or decision
@@ -41,8 +41,8 @@
 | 3 | Angela Cheatwood reference audit | Host blocked here | Optional. The build doesn't depend on it |
 | 4 | Next Chapter guide = **2027 Seller Game Plan** (created today) | Needs Kari's OK to publish it as a public lead magnet | Kari approves, or swaps in a downsizing guide (one-line change in `GUIDES`) |
 | 5 | **"Moving to Ahwatukee" guide** | Not found anywhere. Primary 01 delivers the Ahwatukee Local Guide (Top 10) for now | Kari: point me to it, or keep the Top 10 |
-| 6 | Flodesk segments, custom fields, API key, workflows | No Flodesk connector | Kari: `LEAD-CAPTURE.md` steps 1–6 (about 20 min). Keep workflows **paused** until approved |
-| 7 | Verify the Flodesk API request format | Written from the public v1 docs, not live-tested | Test with your own email (step 6) |
+| 6 | Flodesk segments + workflows (API key already stored in Netlify) | No Flodesk connector | Kari: `LEAD-CAPTURE.md` steps 1–4 (about 15 min). Keep workflows **paused** until approved |
+| 7 | Verify the Flodesk API request format | Written from the public v1 docs, not live-tested | Test with your own email (step 4) |
 | 8 | ManyChat keywords AHWATUKEE / TRAILS / NEXT | No ManyChat connector | Kari pastes the replies from `LEAD-CAPTURE.md` |
 | 9 | Compass compliance review of the footer, license label (AZ vs "DRE"), office address, and SRES® | Requires Compass / your designated broker | Kari |
 | 10 | "About Kari & Client Reviews" goes to `/#about` | No public reviews page found (only a write-a-review link) | Kari: share a Google Business Profile, Zillow, or Compass reviews URL to add |
